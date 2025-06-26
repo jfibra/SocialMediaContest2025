@@ -1,0 +1,153 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { AlertCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
+import dynamic from "next/dynamic"
+
+// Dynamically import SweetAlert2 to avoid SSR issues
+const Swal = dynamic(() => import("sweetalert2"), { ssr: false })
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { login } = useAuth()
+  const router = useRouter()
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError(null)
+
+    try {
+      const success = await login({ email, password })
+
+      if (!success) {
+        // If login returns false but no error was shown via SweetAlert,
+        // show a generic error message
+        setError("Login failed. Please check your credentials and try again.")
+      }
+    } catch (error) {
+      console.error("Login form error:", error)
+      setError("An unexpected error occurred. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="max-w-md mx-auto px-4 py-8 md:py-12">
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="p-4 md:p-6">
+          <div className="flex justify-center mb-6">
+            <div className="relative h-14 w-40 md:h-16 md:w-48">
+              <Image
+                src="https://leuteriorealty.com/logomaterials/LeuterioRealty/Leuterio%20Realty%20logo%20black.png"
+                alt="Leuterio Realty"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+
+          <h1 className="text-xl md:text-2xl font-bold text-center text-realty-primary mb-6">Login</h1>
+
+          {error && (
+            <div className="mb-6 p-3 md:p-4 rounded-md bg-red-50 border border-red-200">
+              <div className="flex items-start">
+                <AlertCircle className="h-5 w-5 text-red-500 mr-2 md:mr-3 mt-0.5 flex-shrink-0" />
+                <p className="text-red-700 text-sm md:text-base">{error}</p>
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-realty-text mb-1 md:mb-2">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 md:px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-realty-primary"
+                placeholder="your@email.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-realty-text mb-1 md:mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 md:px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-realty-primary"
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      <path
+                        fillRule="evenodd"
+                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fillRule="evenodd"
+                        d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z"
+                        clipRule="evenodd"
+                      />
+                      <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-realty-primary hover:bg-realty-secondary text-white py-2 px-4 rounded-md transition-colors duration-300 disabled:opacity-50"
+              >
+                {isSubmitting ? "Signing in..." : "Sign In"}
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link href="/" className="text-sm text-realty-secondary hover:text-realty-primary">
+              Return to Homepage
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
