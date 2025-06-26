@@ -35,9 +35,17 @@ export default function ContestClientPage({ contest }: ContestClientPageProps) {
 
   // Process text to replace \n with <br /> tags
   const processText = (text: string) => {
-    if (!text) return ""
-    return text.replace(/\\n/g, " ").replace(/\n/g, " ")
-  }
+    return text.split("\n").map((line, idx, arr) =>
+      idx < arr.length - 1 ? (
+        <span key={idx}>
+          {line}
+          <br />
+        </span>
+      ) : (
+        <span key={idx}>{line}</span>
+      )
+    );
+  };
 
   // Processed text content
   const processedDescription = processText(contest.description)
