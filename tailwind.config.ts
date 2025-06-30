@@ -9,6 +9,7 @@ const config: Config = {
     "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
+  prefix: "",
   theme: {
     container: {
       center: true,
@@ -25,11 +26,11 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#7c3aed", // Purple-600
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "#dc2626", // Red-600
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
@@ -52,15 +53,18 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Real estate themed colors
-        realty: {
-          primary: "#1a5276", // Deep blue
-          secondary: "#2980b9", // Medium blue
-          accent: "#3498db", // Light blue
-          highlight: "#f39c12", // Orange accent
-          light: "#ecf0f1", // Light gray
-          dark: "#2c3e50", // Dark blue-gray
-          text: "#34495e", // Dark gray for text
+        purple: {
+          25: "#faf7ff",
+          50: "#f3f0ff",
+          100: "#e9e5ff",
+          200: "#d6ccff",
+          300: "#b8a3ff",
+          400: "#9470ff",
+          500: "#7c3aed",
+          600: "#6d28d9",
+          700: "#5b21b6",
+          800: "#4c1d95",
+          900: "#3c1361",
         },
       },
       borderRadius: {
@@ -77,24 +81,14 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        fadeIn: {
-          from: { opacity: "0" },
-          to: { opacity: "1" },
-        },
-        slideUp: {
-          from: { transform: "translateY(20px)", opacity: "0" },
-          to: { transform: "translateY(0)", opacity: "1" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        fadeIn: "fadeIn 0.5s ease-out forwards",
-        slideUp: "slideUp 0.5s ease-out forwards",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+} satisfies Config
 
 export default config
